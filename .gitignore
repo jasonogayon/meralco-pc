@@ -1,0 +1,10 @@
+# Mac OS X metadata files
+.DS_Store
+
+# Windows 7 Makefile Hack using GnuWin32Make
+libiconv2.dll
+libintl3.dll
+make.exe
+
+# Visual Studio Code settings
+.vscode/

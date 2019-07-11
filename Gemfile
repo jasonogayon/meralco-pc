@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+gem 'gimme'
+gem 'rspec'
+gem 'rest-client'
+gem 'nokogiri'
+gem 'json'
+gem 'highline'
+gem 'colorize'
+gem 'powerbar'

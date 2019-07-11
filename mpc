@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require './lib/meralco'
+require 'highline'
+require 'colorize'
+require 'optparse'
+require 'yaml'
+
+# Initialize Options
+options = {
+  :list       => false,
+  :all        => false,
+  :clean      => false,
+  :nosession  => false,
+  :startFrom  => nil
+}
+
+# Create/Read User-Configured Options from a YAML file
+CONFIG_FILE = File.join('mpc.yaml')
+if File.exists? CONFIG_FILE
+  config_options = YAML.load_file(CONFIG_FILE)
+  options.merge!(config_options)
+else
+  File.open(CONFIG_FILE, 'w') { |file| YAML::dump(options, file) }
+  puts "Initialized configuration file in #{CONFIG_FILE}"
+end
+
+# Read User-Configured Options from Terminal
+option_parser = OptionParser.new do |opts|
+  executable_name = File.basename($PROGRAM_NAME)
+  opts.banner = "Get electrical power interruption notices from Meralco.
+  This tool gets information for power interruptions in Makati by default.
+
+  Usage: #{executable_name} [options]
+  "
+
+  opts.on("-l","--list", "Download media from profiles specified in a list") do
+		options[:list] = true
+	end
+
+  opts.on("-a","--all", "Download all media from given profiles") do
+		options[:all] = true
+	end
+
+  opts.on("--clean", "Delete all media in the __latest directory") do |clean|
+    options[:clean] = true
+  end
+
+  opts.on("--nosession", "Download media from a profile using a clean session") do |clean|
+    options[:nosession] = true
+	end
+
+  opts.on("-s STARTFROM", "Specify from which character or string to start,
+    works only when downloading from a list of profiles") do |startFrom|
+		options[:startFrom] = startFrom
+  end
+
+  opts.on("-d DESTINATION", "Specify a directory where to save downloaded media,
+    relative to the current working directory") do |destination|
+    options[:destination] = destination
+	end
+end
+
+# Finalize Options
+option_parser.parse!
+
+# Get Electrical Power Interruptions Notice
+puts "\nLooking up for electrical power interruptions this week ...\n"
+Meralco.new().download(options)
